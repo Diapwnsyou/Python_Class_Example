@@ -5,7 +5,7 @@ class nettools:
     def pinger(self):
         import os
 
-        response = os.system('ping -c 3 {} > /dev/null'.format(self.target))
+        response = os.system('ping -c 3 {} 2> 1 > /dev/null'.format(self.target))
 
         if response == 0:
             return True
@@ -15,7 +15,8 @@ class nettools:
     def tracer(self, full=False):
         if not full:
             import os
-            return os.system('traceroute {} > /dev/null'.format(self.target))
+            response = os.system('traceroute {} 2> 1 > /dev/null'.format(self.target))
+            return response
         else:
             import subprocess
             import re
