@@ -13,8 +13,6 @@ if __name__ == '__main__':
                        help='Pings target')
    parser.add_argument('-t', '--trace', dest='trace', action='store_true',
                        help='Traces to target via traceroute')
-   parser.add_argument('-f', '--full', dest='full', action='store_true',
-                       help='Performs trace but returns hops in a list')
 
    args = parser.parse_args()
 
@@ -27,10 +25,10 @@ if __name__ == '__main__':
            print '{}: Failed ping check'.format(args.target)
 
    if args.trace:
-       if device.tracer():
-           print '{}: Trace Route completed without error'.format(args.target)
+       traceoutput = device.tracer()
+       if not traceoutput:
+           print 'Trace longer than 22 hops most likely failed'
        else:
-           print '{}: Error completing traceroute'.format(args.target)
-   elif args.full:
-       for ips in device.tracer(full=True):
-           print ips
+           print 'Trace hops output:'
+           for ips in traceoutput:
+               print '  {}'.format(ips)

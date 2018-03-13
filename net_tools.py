@@ -5,27 +5,26 @@ class nettools:
     def pinger(self):
         import os
 
-        response = os.system('ping -c 3 {} 2> 1 > /dev/null'.format(self.target))
+        response = os.system('ping -c 3 {} 2>&1 > /dev/null'.format(self.target))
 
         if response == 0:
             return True
         else:
             return False
 
-    def tracer(self, full=False):
-        if not full:
-            import os
-            response = os.system('traceroute {} 2> 1 > /dev/null'.format(self.target))
-            return response
+    def tracer(self):
+        import subprocess
+        import re
+            
+        final_list = []
+
+        response = subprocess.check_output('traceroute {}'.format(self.target), shell=True)
+
+        res_list = [ line for line in response.split('\n') if not re.match(r'^traceroute', line, re.M|re.I)]
+
+        if len(res_list) > 22:
+            return False
         else:
-            import subprocess
-            import re
-
-            final_list = []
-
-            response = subprocess.check_output('traceroute {}'.format(self.target), shell=True)
-            res_list = [ line for line in response.split('\n') if not re.match(r'^traceroute', line, re.M|re.I)]
-
             for hops in res_list:
                 try:
                     match_ip = re.search(r'\(((?:\d+\.){3}\d+)\)', hops, re.M|re.I)
